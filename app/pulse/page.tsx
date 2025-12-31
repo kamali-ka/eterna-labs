@@ -1,8 +1,10 @@
 import Table from '../../components/molecules/Table'
 import { useTokens } from '../../hooks/useTokens'
+import { usePriceUpdates } from '../../hooks/usePriceUpdates'
 
 export default function PulsePage() {
   const { data, isLoading, isError } = useTokens()
+  usePriceUpdates()
 
   return (
     <main className="min-h-screen p-6">

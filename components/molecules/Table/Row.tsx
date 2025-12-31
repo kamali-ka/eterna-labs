@@ -1,9 +1,37 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import type { Token } from '../../../types/token'
 
-export default function TableRow({ token }: { token: Token }) {
+type Props = {
+  token: Token
+}
+
+function Price({ value }: { value: number }) {
+  const [flash, setFlash] = useState<'up' | 'down' | null>(null)
+  const prev = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (prev.current == null) {
+      prev.current = value
+      return
+    }
+    if (value > prev.current) setFlash('up')
+    else if (value < prev.current) setFlash('down')
+
+    const t = setTimeout(() => setFlash(null), 400)
+    prev.current = value
+    return () => clearTimeout(t)
+  }, [value])
+
+  return (
+    <div className={`text-sm transition-colors ${flash === 'up' ? 'text-emerald-600' : flash === 'down' ? 'text-rose-600' : ''}`}>
+      {'$' + value.toFixed(2)}
+    </div>
+  )
+}
+
+export default React.memo(function TableRow({ token }: Props) {
   const changeCls = token.change24h >= 0 ? 'text-emerald-600' : 'text-rose-600'
 
   return (
@@ -16,11 +44,11 @@ export default function TableRow({ token }: { token: Token }) {
         </div>
       </div>
 
-      <div className="text-sm">${token.price.toFixed(2)}</div>
+      <Price value={token.price} />
 
       <div className={`text-sm ${changeCls}`}>{token.change24h.toFixed(2)}%</div>
 
       <div className="text-sm text-slate-600">${(token.liquidity / 1000).toLocaleString()}k</div>
     </div>
   )
-}
+})
