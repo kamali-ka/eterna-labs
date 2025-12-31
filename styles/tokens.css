@@ -1,0 +1,20 @@
+:root {
+  /* Core colors */
+  --color-primary: #0ea5e9; /* sky-500 */
+  --color-bg: #f8fafc; /* slate-50 */
+  --color-muted: #e6eef6; /* light token bg */
+  --color-success: #10b981; /* green-500 */
+  --color-danger: #ef4444; /* red-500 */
+
+  /* Typography */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(2,6,23,0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+}
