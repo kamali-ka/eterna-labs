@@ -1,19 +1,50 @@
-
-@import './tokens.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  --font-geist-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-geist-mono: 'Geist Mono', 'IBM Plex Mono', monospace;
 }
 
-html, body, #__next {
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
   height: 100%;
+  /* Prevent layout shift */
+  overflow-y: scroll;
 }
 
 body {
-  @apply bg-background text-slate-900 antialiased;
-  transition: background-color 180ms ease;
+  @apply bg-bg-primary text-text-primary font-sans antialiased;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-bg-tertiary rounded-md;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-bg-hover;
+}
+
+/* Smooth transitions for interactive elements */
+@layer utilities {
+  .transition-smooth {
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
