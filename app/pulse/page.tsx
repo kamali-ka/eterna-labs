@@ -60,7 +60,7 @@ function TokenSectionTable({
   const virtualItems = rowVirtualizer.getVirtualItems()
 
   return (
-    <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col h-full">
+    <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col flex-1 min-h-0">
       <AxiomTableHeaderNew />
 
       {loading ? (
@@ -79,7 +79,6 @@ function TokenSectionTable({
         <div
           ref={parentRef}
           className="overflow-y-auto overflow-x-hidden flex-1 scrollbar-thin scrollbar-thumb-border-default scrollbar-track-bg-tertiary"
-          style={{ height: 'calc(100vh - 350px)', minHeight: '400px' }}
         >
           <div
             style={{
@@ -239,10 +238,10 @@ export default function AxiomPulsePage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-primary pt-4 overflow-x-hidden">
-      <div className="w-full max-w-full px-2 sm:px-4 py-6">
+    <main className="h-screen bg-bg-primary overflow-hidden flex flex-col">
+      <div className="w-full max-w-full px-2 sm:px-4 py-6 flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="mb-6 mx-auto">
+        <header className="mb-4 mx-auto flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-text-primary mb-2">
@@ -267,7 +266,7 @@ export default function AxiomPulsePage() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="mb-6 mx-auto bg-bg-secondary border border-border-default rounded-lg p-4 sm:p-6">
+          <div className="mb-4 mx-auto bg-bg-secondary border border-border-default rounded-lg p-4 sm:p-6 flex-shrink-0">
             <div className="grid grid-cols-3 gap-6">
               {/* Age Range */}
               <div>
@@ -411,14 +410,14 @@ export default function AxiomPulsePage() {
         )}
 
         {/* All Three Sections in Same Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 w-full" style={{ height: 'calc(100vh - 280px)' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 w-full flex-1 min-h-0">
           {sections.map((section) => {
             const sectionTokens = getSectionTokens(section.status)
 
             return (
-              <section key={section.status} className="min-w-0 flex flex-col">
+              <section key={section.status} className="min-w-0 flex flex-col min-h-0">
                 {/* Section Header */}
-                <div className="mb-4">
+                <div className="mb-3 flex-shrink-0">
                   <h2 className="text-lg font-semibold text-text-primary mb-1 truncate">
                     {section.title}
                   </h2>
