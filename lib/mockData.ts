@@ -36,6 +36,7 @@ export function generateMockTokens(): Token[] {
     const priceChange = (Math.random() - 0.5) * 30 // -15% to +15%
     const volume = Math.random() * 10_000_000
     const marketCap = basePrice * (1_000_000 + Math.random() * 50_000_000)
+    const liquidity = Math.random() * 5_000_000
 
     return {
       id: `tkn-${index}`,
@@ -48,6 +49,15 @@ export function generateMockTokens(): Token[] {
       priceChange24h: Number(priceChange.toFixed(2)),
       volume24h: Number(volume.toFixed(2)),
       marketCap: Number(marketCap.toFixed(2)),
+      liquidity: Number(liquidity.toFixed(2)),
+
+      // Axiom-specific metrics
+      ageMinutes: Math.floor(Math.random() * 1440), // 0-24 hours in minutes
+      top10HoldersPercent: Number((20 + Math.random() * 50).toFixed(2)), // 20-70%
+      devHoldingPercent: Number((Math.random() * 20).toFixed(2)), // 0-20%
+      snipersPercent: Number((Math.random() * 15).toFixed(2)), // 0-15%
+      insidersPercent: Number((Math.random() * 25).toFixed(2)), // 0-25%
+
       logo: `https://api.dicebear.com/7.x/identicon/svg?seed=${token.symbol}`,
       createdAt: new Date(Date.now() - Math.random() * 86400000 * 7).toISOString(), // Last 7 days
       launchpad: token.launchpad,

@@ -29,6 +29,14 @@ export interface Token {
   priceChange24h: number        // % change (can be negative)
   volume24h: number             // 24h trading volume
   marketCap: number             // Total market cap
+  liquidity: number             // Liquidity in USD
+
+  // Axiom-specific metrics
+  ageMinutes: number            // Age in minutes since creation
+  top10HoldersPercent: number   // % held by top 10 holders
+  devHoldingPercent: number     // % held by developer
+  snipersPercent: number        // % held by snipers/bots
+  insidersPercent: number       // % held by insiders/team
 
   // Metadata
   logo?: string                 // Token logo URL
