@@ -11,7 +11,17 @@ import { selectAllTokens, selectTokensLoading, setTokens } from '@/store/slices/
 import { selectSortConfig, setSortConfig } from '@/store/slices/filtersSlice'
 import { usePriceUpdates } from '@/hooks/usePriceUpdates'
 import { getMockTokens } from '@/lib/mockData'
-import { Filter, ChevronDown } from 'lucide-react'
+import {
+  Filter,
+  ChevronDown,
+  HelpCircle,
+  List,
+  Bookmark,
+  Calendar,
+  Volume2,
+  Settings,
+  Folder
+} from 'lucide-react'
 import type { Token, TokenStatus } from '@/types/token'
 
 interface TokenSection {
@@ -38,14 +48,10 @@ interface DisplayFilters {
  */
 function TokenSectionTable({
   tokens,
-  sortConfig,
-  onSort,
   loading,
   sectionId
 }: {
   tokens: Token[]
-  sortConfig: { field: keyof Token; direction: 'asc' | 'desc' }
-  onSort: (field: string) => void
   loading: boolean
   sectionId: string
 }) {
@@ -59,9 +65,16 @@ function TokenSectionTable({
 
   const virtualItems = rowVirtualizer.getVirtualItems()
 
+  // Get title based on sectionId
+  const getTitle = (id: string) => {
+    if (id === 'new') return 'New Pairs'
+    if (id === 'final-stretch') return 'Final Stretch'
+    return 'Migrated'
+  }
+
   return (
     <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col flex-1 min-h-0">
-      <AxiomTableHeaderNew />
+      <AxiomTableHeaderNew title={getTitle(sectionId)} />
 
       {loading ? (
         <div className="p-4 space-y-3">
@@ -238,29 +251,69 @@ export default function AxiomPulsePage() {
   }
 
   return (
-    <main className="h-screen bg-bg-primary overflow-hidden flex flex-col">
-      <div className="w-full max-w-full px-2 sm:px-4 py-6 flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="mb-4 mx-auto flex-shrink-0">
+    <main className="h-screen bg-bg-primary overflow-hidden flex flex-col pb-12">
+      <div className="w-full max-w-full px-2 sm:px-4 py-4 flex-1 flex flex-col overflow-hidden">
+        {/* Page Header - Axiom Style */}
+        <header className="mb-4 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-text-primary mb-2">
-                Pulse
-              </h1>
-              <p className="text-text-secondary text-sm">
-                Monitor pump.fun tokens across their lifecycle - all sections update in real-time
-              </p>
+            {/* Left: Title + Icon Buttons */}
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-text-primary">Pulse</h1>
+
+              {/* Icon Buttons */}
+              <div className="flex items-center gap-1">
+                <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                  <List className="h-4 w-4 text-blue-500" />
+                </button>
+                <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                  <svg className="h-4 w-4 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Filter Toggle Button */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-bg-secondary border border-border-default rounded-lg hover:bg-bg-hover transition-smooth text-text-primary"
-            >
-              <Filter className="h-4 w-4" />
-              Display Filters
-              <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-            </button>
+            {/* Right: Action Icons + Display Dropdown */}
+            <div className="flex items-center gap-2">
+              <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                <HelpCircle className="h-4 w-4 text-text-secondary" />
+              </button>
+
+              {/* Display Dropdown */}
+              <button className="flex items-center gap-2 px-3 py-1.5 bg-bg-secondary border border-border-default rounded-lg hover:bg-bg-hover transition-smooth">
+                <List className="h-4 w-4 text-text-secondary" />
+                <span className="text-sm text-text-primary">Display</span>
+                <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
+              </button>
+
+              <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                <Bookmark className="h-4 w-4 text-text-secondary" />
+              </button>
+
+              <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                <Calendar className="h-4 w-4 text-text-secondary" />
+              </button>
+
+              <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                <Volume2 className="h-4 w-4 text-text-secondary" />
+              </button>
+
+              <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+                <Settings className="h-4 w-4 text-text-secondary" />
+              </button>
+
+              {/* Folder with dropdown */}
+              <button className="flex items-center gap-1.5 px-2 py-1.5 bg-bg-secondary border border-border-default rounded-lg hover:bg-bg-hover transition-smooth">
+                <Folder className="h-4 w-4 text-text-secondary" />
+                <span className="text-xs text-text-primary">1</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-text-tertiary">=</span>
+                  <span className="text-xs text-text-primary">0</span>
+                </div>
+                <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -416,21 +469,9 @@ export default function AxiomPulsePage() {
 
             return (
               <section key={section.status} className="min-w-0 flex flex-col min-h-0">
-                {/* Section Header */}
-                <div className="mb-3 flex-shrink-0">
-                  <h2 className="text-lg font-semibold text-text-primary mb-1 truncate">
-                    {section.title}
-                  </h2>
-                  <p className="text-xs text-text-tertiary line-clamp-2">
-                    {section.description}
-                  </p>
-                </div>
-
                 {/* Section Table with Independent Scrollbar */}
                 <TokenSectionTable
                   tokens={sectionTokens}
-                  sortConfig={sortConfig}
-                  onSort={handleSort}
                   loading={loading}
                   sectionId={section.status}
                 />

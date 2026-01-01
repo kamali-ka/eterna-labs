@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import Providers from '../components/Providers'
 import { Navbar } from '../components/organisms/Navigation/Navbar'
+import { BottomStatusBar } from '../components/organisms/StatusBar/BottomStatusBar'
 
 export const metadata = {
   title: 'Axiom Pulse - Token Discovery',
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Navbar />
           {children}
+          <BottomStatusBar />
         </Providers>
       </body>
     </html>
