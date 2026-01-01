@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useRef } from 'react'
-import { AxiomTableHeader } from '@/components/organisms/TokenTable/AxiomTableHeader'
-import { AxiomTableRow } from '@/components/organisms/TokenTable/AxiomTableRow'
+import { AxiomTableHeaderNew } from '@/components/organisms/TokenTable/AxiomTableHeaderNew'
+import { AxiomTableRowNew } from '@/components/organisms/TokenTable/AxiomTableRowNew'
 import { Skeleton } from '@/components/atoms/Skeleton'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAllTokens, selectTokensLoading, setTokens } from '@/store/slices/tokensSlice'
@@ -53,7 +53,7 @@ function TokenSectionTable({
   const rowVirtualizer = useVirtualizer({
     count: tokens.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 72,
+    estimateSize: () => 100, // Increased height for new row design
     overscan: 5,
   })
 
@@ -61,7 +61,7 @@ function TokenSectionTable({
 
   return (
     <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col h-full">
-      <AxiomTableHeader sortConfig={sortConfig} onSort={onSort} />
+      <AxiomTableHeaderNew />
 
       {loading ? (
         <div className="p-4 space-y-3">
@@ -90,7 +90,7 @@ function TokenSectionTable({
             {virtualItems.map((virtualRow) => {
               const token = tokens[virtualRow.index]
               return (
-                <AxiomTableRow
+                <AxiomTableRowNew
                   key={token.id}
                   token={token}
                   style={{

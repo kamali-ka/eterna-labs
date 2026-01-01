@@ -37,6 +37,23 @@ export function generateMockTokens(): Token[] {
     const volume = Math.random() * 10_000_000
     const marketCap = basePrice * (1_000_000 + Math.random() * 50_000_000)
     const liquidity = Math.random() * 5_000_000
+    const ageMinutes = Math.floor(Math.random() * 1440) // 0-24 hours in minutes
+
+    // Generate age display string
+    const ageDisplay = ageMinutes < 1
+      ? `${Math.floor(ageMinutes * 60)}s`
+      : ageMinutes < 60
+      ? `${ageMinutes}m`
+      : ageMinutes < 1440
+      ? `${Math.floor(ageMinutes / 60)}h`
+      : `${Math.floor(ageMinutes / 1440)}d`
+
+    // Generate creator address
+    const creatorAddress = `${Math.random().toString(36).substring(2, 6)}...${token.launchpad.substring(0, 4)}`
+
+    // Generate random percentage colors
+    const percentColors: Array<'green' | 'red' | 'gray'> = ['green', 'red', 'gray']
+    const timePeriods = ['4mo', '1d', '2d', '1y', '20d', '3w', '5h']
 
     return {
       id: `tkn-${index}`,
@@ -51,12 +68,56 @@ export function generateMockTokens(): Token[] {
       marketCap: Number(marketCap.toFixed(2)),
       liquidity: Number(liquidity.toFixed(2)),
 
+      // Age & Time
+      ageMinutes,
+      ageDisplay,
+
       // Axiom-specific metrics
-      ageMinutes: Math.floor(Math.random() * 1440), // 0-24 hours in minutes
       top10HoldersPercent: Number((20 + Math.random() * 50).toFixed(2)), // 20-70%
       devHoldingPercent: Number((Math.random() * 20).toFixed(2)), // 0-20%
       snipersPercent: Number((Math.random() * 15).toFixed(2)), // 0-15%
       insidersPercent: Number((Math.random() * 25).toFixed(2)), // 0-25%
+
+      // Icon row data
+      organicGrowth: Math.random() > 0.5,
+      hasLink: Math.random() > 0.3,
+      searchable: Math.random() > 0.3,
+      holderCount: Math.floor(Math.random() * 10),
+      trendDirection: Math.random() > 0.6 ? 'up' : Math.random() > 0.3 ? 'down' : 'neutral',
+      fireCount: Math.floor(Math.random() * 5),
+      equalsValue: Number((Math.random() * 0.5).toFixed(2)),
+      txCount: Math.floor(Math.random() * 100),
+      txIndicator: Math.random() > 0.5 ? 'up' : Math.random() > 0.3 ? 'down' : 'neutral',
+
+      // Platform info
+      platform: token.launchpad.includes('pump') ? 'pump' : 'Raydium',
+      creatorAddress,
+
+      // Percentage indicators with colors and time periods
+      percentage1: {
+        value: Math.floor(Math.random() * 100),
+        period: timePeriods[Math.floor(Math.random() * timePeriods.length)],
+        color: percentColors[Math.floor(Math.random() * percentColors.length)]
+      },
+      percentage2: {
+        value: Math.floor(Math.random() * 100),
+        period: timePeriods[Math.floor(Math.random() * timePeriods.length)],
+        color: percentColors[Math.floor(Math.random() * percentColors.length)]
+      },
+      percentage3: {
+        value: Math.floor(Math.random() * 100),
+        period: timePeriods[Math.floor(Math.random() * timePeriods.length)],
+        color: percentColors[Math.floor(Math.random() * percentColors.length)]
+      },
+      percentage4: {
+        value: Math.floor(Math.random() * 100),
+        period: '',
+        color: percentColors[Math.floor(Math.random() * percentColors.length)]
+      },
+
+      // Badge indicators
+      verified: Math.random() > 0.7,
+      hasBadge: Math.random() > 0.8,
 
       logo: `https://api.dicebear.com/7.x/identicon/svg?seed=${token.symbol}`,
       createdAt: new Date(Date.now() - Math.random() * 86400000 * 7).toISOString(), // Last 7 days
