@@ -1,19 +1,17 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useRef } from 'react'
 import { AxiomTableHeaderNew } from '@/components/organisms/TokenTable/AxiomTableHeaderNew'
 import { AxiomTableRowNew } from '@/components/organisms/TokenTable/AxiomTableRowNew'
 import { MobileTokenCard } from '@/components/organisms/TokenTable/MobileTokenCard'
 import { Skeleton } from '@/components/atoms/Skeleton'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAllTokens, selectTokensLoading, setTokens } from '@/store/slices/tokensSlice'
-import { selectSortConfig, setSortConfig } from '@/store/slices/filtersSlice'
+import { selectSortConfig } from '@/store/slices/filtersSlice'
 import { usePriceUpdates } from '@/hooks/usePriceUpdates'
 import { getMockTokens } from '@/lib/mockData'
 import {
-  Filter,
   ChevronDown,
   HelpCircle,
   List,
@@ -77,7 +75,7 @@ function TokenSectionTable({
     <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col flex-1 min-h-0">
       {/* Desktop: Show table header */}
       <div className="hidden md:block">
-        <AxiomTableHeaderNew title={getTitle(sectionId)} />
+        <AxiomTableHeaderNew title={getTitle(sectionId)} sectionId={sectionId as 'new' | 'final-stretch' | 'migrated'} />
       </div>
 
       {/* Mobile: Show section title */}
@@ -254,19 +252,6 @@ export default function AxiomPulsePage() {
       volumeMin: 0,
       marketCapMin: 0,
     })
-  }
-
-  // Handle column sort
-  const handleSort = (field: string) => {
-    const newDirection =
-      sortConfig.field === field && sortConfig.direction === 'desc' ? 'asc' : 'desc'
-
-    dispatch(
-      setSortConfig({
-        field: field as keyof Token,
-        direction: newDirection,
-      })
-    )
   }
 
   return (

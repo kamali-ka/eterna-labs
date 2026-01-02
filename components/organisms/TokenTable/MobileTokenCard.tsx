@@ -37,7 +37,7 @@ export function MobileTokenCard({ token }: MobileTokenCardProps) {
         {/* Token Image */}
         <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-bg-tertiary">
           <img
-            src={token.logoUrl || '/placeholder-token.png'}
+            src={token.logo || '/placeholder-token.png'}
             alt={token.name}
             className="w-full h-full object-cover"
           />
@@ -70,7 +70,7 @@ export function MobileTokenCard({ token }: MobileTokenCardProps) {
             {/* Price + MC */}
             <div className="text-right flex-shrink-0">
               <div className="text-sm font-semibold text-green-500">
-                ${token.price.toFixed(4)}
+                ${token.currentPrice.toFixed(4)}
               </div>
               <div className="text-[10px] text-text-tertiary">
                 MC ${formatNumber(token.marketCap)}
