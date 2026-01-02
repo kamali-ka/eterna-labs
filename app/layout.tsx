@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import Providers from '../components/Providers'
 import { Navbar } from '../components/organisms/Navigation/Navbar'
+import { SubNavbar } from '../components/organisms/Navigation/SubNavbar'
 import { BottomStatusBar } from '../components/organisms/StatusBar/BottomStatusBar'
 
 export const metadata = {
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <Navbar />
+          <SubNavbar />
           {children}
           <BottomStatusBar />
         </Providers>

@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   Search,
   ChevronDown,
-  ChevronRight,
-  ChevronLeft,
   Star,
   Bell,
   Menu,
@@ -15,9 +13,11 @@ import {
   Wallet,
   User,
   Home,
-  Users
+  Users,
+  Coins
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { ExchangeModal } from '../Modals/ExchangeModal'
 
 interface NavItem {
   label: string
@@ -40,7 +40,6 @@ const navItems: NavItem[] = [
   { label: 'Yield', href: '/yield' },
   { label: 'Vision', href: '/vision', hasSubmenu: true },
   { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Rewards', href: '/rewards' },
 ]
 
 const networks: Network[] = [
@@ -72,140 +71,54 @@ export function Navbar() {
   const [walletOpen, setWalletOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [showLeftArrow, setShowLeftArrow] = useState(false)
-  const [showRightArrow, setShowRightArrow] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  // Check scroll position to show/hide arrows
-  const checkScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
-      setShowLeftArrow(scrollLeft > 0)
-      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
-    }
-  }
-
-  useEffect(() => {
-    checkScroll()
-    window.addEventListener('resize', checkScroll)
-    return () => window.removeEventListener('resize', checkScroll)
-  }, [])
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 200
-      scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      })
-    }
-  }
+  const [exchangeModalOpen, setExchangeModalOpen] = useState(false)
 
   return (
-    <nav className="sticky top-0 z-50 bg-bg-secondary border-b border-border-default backdrop-blur-sm bg-opacity-95">
-      <div className="w-full px-4 lg:px-6">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Left Section: Logo + Scrollable Navigation */}
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
+    <nav className="sticky top-0 z-50 bg-[#0a0a0a] border-b border-border-default backdrop-blur-sm">
+      <div className="w-full px-6">
+        <div className="flex items-center justify-between h-14 gap-6">
+          {/* Left Section: Logo + Navigation */}
+          <div className="flex items-center gap-8 flex-1 min-w-0">
+            {/* Logo - Triangle */}
+            <Link href="/" className="flex items-center shrink-0">
+              <div className="w-8 h-8 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2 L2 22 L22 22 Z" />
+                </svg>
               </div>
-              <span className="text-xl font-bold text-text-primary hidden sm:block">
-                Axiom
-              </span>
             </Link>
 
-            {/* Desktop Navigation with Horizontal Scroll Carousel */}
-            <div className="hidden lg:flex items-center flex-1 min-w-0 relative group/nav">
-              {/* Left Scroll Arrow - Shows on hover */}
-              {showLeftArrow && (
-                <button
-                  onClick={() => scroll('left')}
-                  className="absolute left-0 z-10 p-1.5 bg-bg-secondary border border-border-default rounded-lg hover:bg-bg-hover transition-all shadow-lg opacity-0 group-hover/nav:opacity-100"
-                >
-                  <ChevronLeft className="h-4 w-4 text-text-primary" />
-                </button>
-              )}
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href
 
-              {/* Scrollable Navigation Container */}
-              <div
-                ref={scrollContainerRef}
-                onScroll={checkScroll}
-                className="flex items-center gap-1 overflow-x-auto scrollbar-hide scroll-smooth px-8"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                {navItems.map((item) => {
-                  const isActive = pathname === item.href
-
-                  return (
-                    <div key={item.href} className="relative group shrink-0">
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          'flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-smooth whitespace-nowrap',
-                          isActive
-                            ? 'text-text-primary bg-bg-hover'
-                            : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover/50'
-                        )}
-                      >
-                        {item.label}
-                        {item.hasSubmenu && (
-                          <ChevronRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        )}
-                      </Link>
-
-                      {/* Submenu for Vision - shown on hover */}
-                      {item.hasSubmenu && (
-                        <div className="absolute top-full left-0 mt-1 w-48 bg-bg-secondary border border-border-default rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                          <div className="p-2">
-                            <Link
-                              href="/vision/analytics"
-                              className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-lg transition-smooth"
-                            >
-                              Analytics
-                            </Link>
-                            <Link
-                              href="/vision/insights"
-                              className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-lg transition-smooth"
-                            >
-                              Market Insights
-                            </Link>
-                            <Link
-                              href="/vision/trends"
-                              className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-lg transition-smooth"
-                            >
-                              Trending Data
-                            </Link>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-
-              {/* Right Scroll Arrow - Shows on hover */}
-              {showRightArrow && (
-                <button
-                  onClick={() => scroll('right')}
-                  className="absolute right-0 z-10 p-1.5 bg-bg-secondary border border-border-default rounded-lg hover:bg-bg-hover transition-all shadow-lg opacity-0 group-hover/nav:opacity-100"
-                >
-                  <ChevronRight className="h-4 w-4 text-text-primary" />
-                </button>
-              )}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'text-sm font-medium transition-colors whitespace-nowrap',
+                      isActive
+                        ? 'text-blue-500'
+                        : 'text-white hover:text-blue-400'
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
             </div>
           </div>
 
           {/* Right Section: Search Icon, Network, Actions */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Search Icon Only */}
+          <div className="flex items-center gap-4 shrink-0">
+            {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 rounded-lg hover:bg-bg-hover transition-smooth"
+              className="p-1.5 hover:bg-bg-hover rounded transition-smooth"
             >
-              <Search className="h-5 w-5 text-text-secondary hover:text-text-primary transition-smooth" />
+              <Search className="h-5 w-5 text-white" />
             </button>
 
             {/* Search Modal */}
@@ -236,21 +149,19 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Network Selector */}
+            {/* Network Selector - SOL with blue lines icon */}
             <div className="relative">
               <button
                 onClick={() => setNetworkDropdownOpen(!networkDropdownOpen)}
-                className="flex items-center gap-2 p-2 hover:bg-bg-hover rounded-lg transition-smooth"
+                className="flex items-center gap-2 px-3 py-1.5 hover:bg-bg-hover rounded-lg transition-smooth"
               >
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{
-                    background: selectedNetwork.color,
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <span className="text-white drop-shadow-sm">{selectedNetwork.icon}</span>
-                </div>
+                <svg className="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <span className="text-sm font-medium text-white">SOL</span>
                 <ChevronDown className="h-4 w-4 text-text-secondary" />
               </button>
 
@@ -289,7 +200,10 @@ export function Navbar() {
             </div>
 
             {/* Deposit Button */}
-            <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-black font-medium text-sm rounded-lg transition-smooth">
+            <button
+              onClick={() => setExchangeModalOpen(true)}
+              className="hidden sm:flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-smooth"
+            >
               Deposit
             </button>
 
@@ -297,11 +211,9 @@ export function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setWatchlistOpen(!watchlistOpen)}
-                className="p-2 rounded-lg hover:bg-bg-hover transition-smooth relative"
+                className="p-1.5 hover:bg-bg-hover rounded transition-smooth"
               >
-                <div className="w-9 h-9 rounded-full border border-border-default flex items-center justify-center bg-bg-tertiary hover:border-border-focus transition-smooth">
-                  <Star className="h-4 w-4 text-text-secondary" />
-                </div>
+                <Star className="h-5 w-5 text-white" />
               </button>
 
               {/* Watchlist Popup */}
@@ -333,11 +245,9 @@ export function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="p-2 rounded-lg hover:bg-bg-hover transition-smooth relative"
+                className="p-1.5 hover:bg-bg-hover rounded transition-smooth"
               >
-                <Bell className="h-5 w-5 text-text-secondary" />
-                {/* Notification Badge */}
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                <Bell className="h-5 w-5 text-white" />
               </button>
 
               {/* Notifications Popup */}
@@ -365,72 +275,76 @@ export function Navbar() {
               )}
             </div>
 
-            {/* Wallet/Account Icon */}
+            {/* Wallet Icon with "0" */}
             <button
               onClick={() => setWalletOpen(true)}
-              className="p-2 rounded-lg hover:bg-bg-hover transition-smooth"
+              className="flex items-center gap-1.5 px-2 py-1 hover:bg-bg-hover rounded transition-smooth"
             >
-              <Wallet className="h-5 w-5 text-text-secondary hover:text-text-primary transition-smooth" />
+              <Wallet className="h-4 w-4 text-white" />
+              <span className="text-sm font-medium text-white">=</span>
+              <span className="text-sm font-semibold text-white">0</span>
             </button>
 
             {/* Wallet Popup */}
             <div className="relative">
               {walletOpen && (
-                <div className="absolute top-full right-0 mt-2 w-72 bg-bg-secondary border border-border-default rounded-lg shadow-lg z-50">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-semibold text-text-primary">Total Value</h3>
-                      <button
-                        onClick={() => setWalletOpen(false)}
-                        className="p-1 hover:bg-bg-hover rounded transition-smooth"
-                      >
-                        <X className="h-4 w-4 text-text-secondary" />
-                      </button>
+                <div className="absolute top-full right-0 mt-2 w-96 bg-[#1a1a1a] border border-border-default rounded-xl shadow-2xl z-50">
+                  <div className="p-6">
+                    {/* Total Value Section */}
+                    <div className="mb-6">
+                      <h3 className="text-sm font-medium text-text-secondary mb-2">Total Value</h3>
+                      <div className="text-4xl font-bold text-white mb-4">$0</div>
+
+                      {/* Solana and Perps Tabs */}
+                      <div className="flex gap-3 mb-6">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-bg-tertiary border border-border-default rounded-lg hover:bg-bg-hover transition-smooth">
+                          <Wallet className="h-4 w-4 text-white" />
+                          <span className="text-sm font-medium text-white">Solana</span>
+                        </button>
+                        <button className="flex items-center gap-2 px-4 py-2 bg-bg-tertiary border border-border-default rounded-lg hover:bg-bg-hover transition-smooth">
+                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                          </svg>
+                          <span className="text-sm font-medium text-white">Perps</span>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Balances */}
-                    <div className="space-y-3 mb-4">
-                      {/* Solana Balance */}
-                      <div className="flex items-center justify-between py-2 border-b border-border-default">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                            style={{
-                              background: 'linear-gradient(135deg, #9945FF 0%, #14F195 100%)',
-                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-                            }}
-                          >
-                            <span className="text-white text-[10px]">SOL</span>
-                          </div>
-                          <span className="text-sm text-text-primary font-medium">Solana</span>
-                        </div>
+                    {/* Balance Display */}
+                    <div className="flex items-center justify-between mb-6 py-4 border-y border-border-default">
+                      {/* Left: Blue Lines Icon with 0 */}
+                      <div className="flex items-center gap-3">
+                        <svg className="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="7" height="7" />
+                          <rect x="14" y="3" width="7" height="7" />
+                          <rect x="14" y="14" width="7" height="7" />
+                          <rect x="3" y="14" width="7" height="7" />
+                        </svg>
+                        <span className="text-2xl font-bold text-white">0</span>
                       </div>
 
-                      {/* Perps */}
-                      <div className="flex items-center justify-between py-1">
-                        <span className="text-sm text-text-secondary">Perps</span>
-                        <span className="text-sm font-semibold text-text-primary">$0</span>
-                      </div>
+                      {/* Center: Transfer Icon */}
+                      <button className="p-2 hover:bg-bg-hover rounded-lg transition-smooth">
+                        <svg className="h-5 w-5 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M7 16V4M7 4L3 8M7 4L11 8" />
+                          <path d="M17 8V20M17 20L21 16M17 20L13 16" />
+                        </svg>
+                      </button>
 
-                      {/* SOL */}
-                      <div className="flex items-center justify-between py-1">
-                        <span className="text-sm text-text-secondary">SOL</span>
-                        <span className="text-sm font-semibold text-text-primary">0</span>
-                      </div>
-
-                      {/* USDC */}
-                      <div className="flex items-center justify-between py-1">
-                        <span className="text-sm text-text-secondary">USDC</span>
-                        <span className="text-sm font-semibold text-text-primary">0</span>
+                      {/* Right: Teal Coins Icon with 0 */}
+                      <div className="flex items-center gap-3">
+                        <Coins className="h-5 w-5 text-cyan-400" />
+                        <span className="text-2xl font-bold text-white">0</span>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="grid grid-cols-2 gap-3">
-                      <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-black font-semibold text-sm rounded-lg transition-smooth">
+                      <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-smooth">
                         Deposit
                       </button>
-                      <button className="px-4 py-2 bg-bg-tertiary hover:bg-bg-hover border border-border-default text-text-primary font-semibold text-sm rounded-lg transition-smooth">
+                      <button className="px-6 py-3 bg-[#2a2a2a] hover:bg-[#333333] border border-border-default text-white font-semibold text-sm rounded-lg transition-smooth">
                         Withdraw
                       </button>
                     </div>
@@ -439,15 +353,15 @@ export function Navbar() {
               )}
             </div>
 
-            {/* Account Settings Icon */}
+            {/* Coins with "0" and dropdown */}
             <div className="relative">
               <button
                 onClick={() => setAccountOpen(!accountOpen)}
-                className="p-2 rounded-lg hover:bg-bg-hover transition-smooth relative"
+                className="flex items-center gap-1.5 px-2 py-1 hover:bg-bg-hover rounded transition-smooth"
               >
-                <User className="h-5 w-5 text-text-secondary hover:text-text-primary transition-smooth" />
-                {/* Green Active Indicator Dot */}
-                <span className="absolute bottom-1.5 right-1.5 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></span>
+                <Coins className="h-4 w-4 text-cyan-400" />
+                <span className="text-sm font-semibold text-white">0</span>
+                <ChevronDown className="h-3.5 w-3.5 text-text-secondary" />
               </button>
 
               {/* Account Popup */}
@@ -475,6 +389,16 @@ export function Navbar() {
                 </div>
               )}
             </div>
+
+            {/* Pink Avatar */}
+            <button className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-semibold text-sm hover:bg-pink-600 transition-smooth">
+              SP
+            </button>
+
+            {/* User Icon */}
+            <button className="p-1.5 hover:bg-bg-hover rounded transition-smooth">
+              <User className="h-5 w-5 text-white" />
+            </button>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -511,9 +435,6 @@ export function Navbar() {
                     )}
                   >
                     {item.label}
-                    {item.hasSubmenu && (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
                   </Link>
                 )
               })}
@@ -542,6 +463,12 @@ export function Navbar() {
           }}
         />
       )}
+
+      {/* Exchange Modal */}
+      <ExchangeModal
+        isOpen={exchangeModalOpen}
+        onClose={() => setExchangeModalOpen(false)}
+      />
     </nav>
   )
 }

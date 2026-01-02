@@ -24,6 +24,18 @@ body {
   @apply bg-bg-primary text-text-primary font-sans antialiased;
 }
 
+/* Blur page content when modal is open */
+body.modal-open > div {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+body.modal-open > div[class*="z-[100]"],
+body.modal-open > div[class*="z-[101]"] {
+  filter: none;
+  pointer-events: auto;
+}
+
 /* Custom scrollbar for dark theme */
 ::-webkit-scrollbar {
   width: 12px;
