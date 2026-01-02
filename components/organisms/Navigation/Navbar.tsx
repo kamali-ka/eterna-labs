@@ -74,6 +74,7 @@ export function Navbar() {
   const [exchangeModalOpen, setExchangeModalOpen] = useState(false)
 
   return (
+    <>
     <nav className="sticky top-0 z-50 bg-[#0a0a0a] border-b border-border-default backdrop-blur-sm">
       <div className="w-full px-6">
         <div className="flex items-center justify-between h-14 gap-6">
@@ -463,12 +464,12 @@ export function Navbar() {
           }}
         />
       )}
-
-      {/* Exchange Modal */}
-      <ExchangeModal
-        isOpen={exchangeModalOpen}
-        onClose={() => setExchangeModalOpen(false)}
-      />
     </nav>
+    {/* Exchange Modal - rendered outside nav to avoid z-index stacking issues */}
+    <ExchangeModal
+      isOpen={exchangeModalOpen}
+      onClose={() => setExchangeModalOpen(false)}
+    />
+    </>
   )
 }

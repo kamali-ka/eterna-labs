@@ -30,8 +30,8 @@ body.modal-open > div {
   pointer-events: none;
 }
 
-body.modal-open > div[class*="z-[100]"],
-body.modal-open > div[class*="z-[101]"] {
+body.modal-open > div[class*="z-[9998]"],
+body.modal-open > div[class*="z-[9999]"] {
   filter: none;
   pointer-events: auto;
 }

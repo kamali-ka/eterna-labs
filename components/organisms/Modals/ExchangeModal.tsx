@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
 interface ExchangeModalProps {
@@ -11,9 +12,17 @@ interface ExchangeModalProps {
 /**
  * Exchange Modal - Deposit/Convert/Buy
  * Matches Axiom Trade design
+ * Renders using portal to ensure proper z-index stacking
  */
 export function ExchangeModal({ isOpen, onClose }: ExchangeModalProps) {
   const [activeTab, setActiveTab] = useState<'convert' | 'deposit' | 'buy'>('deposit')
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted (client-side only)
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   // Apply blur to page content when modal is open
   useEffect(() => {
@@ -27,15 +36,15 @@ export function ExchangeModal({ isOpen, onClose }: ExchangeModalProps) {
     }
   }, [isOpen])
 
-  if (!isOpen) return null
+  if (!mounted || !isOpen) return null
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop - covers entire viewport */}
-      <div className="fixed inset-0 bg-black/60 z-[100]" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/60 z-[9998]" onClick={onClose} />
 
       {/* Modal */}
-      <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[101] w-full max-w-[340px] px-4">
+      <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-[340px] px-4">
         <div className="bg-[#1a1a1a] border border-border-default rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-border-default">
@@ -502,6 +511,7 @@ export function ExchangeModal({ isOpen, onClose }: ExchangeModalProps) {
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }
