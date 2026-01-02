@@ -5,6 +5,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useRef } from 'react'
 import { AxiomTableHeaderNew } from '@/components/organisms/TokenTable/AxiomTableHeaderNew'
 import { AxiomTableRowNew } from '@/components/organisms/TokenTable/AxiomTableRowNew'
+import { MobileTokenCard } from '@/components/organisms/TokenTable/MobileTokenCard'
 import { Skeleton } from '@/components/atoms/Skeleton'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { selectAllTokens, selectTokensLoading, setTokens } from '@/store/slices/tokensSlice'
@@ -74,7 +75,15 @@ function TokenSectionTable({
 
   return (
     <div className="bg-bg-secondary rounded-lg border border-border-default overflow-hidden flex flex-col flex-1 min-h-0">
-      <AxiomTableHeaderNew title={getTitle(sectionId)} />
+      {/* Desktop: Show table header */}
+      <div className="hidden md:block">
+        <AxiomTableHeaderNew title={getTitle(sectionId)} />
+      </div>
+
+      {/* Mobile: Show section title */}
+      <div className="md:hidden px-4 py-3 border-b border-border-default">
+        <h2 className="text-sm font-semibold text-white">{getTitle(sectionId)}</h2>
+      </div>
 
       {loading ? (
         <div className="p-4 space-y-3">
@@ -93,28 +102,38 @@ function TokenSectionTable({
           ref={parentRef}
           className="overflow-y-auto overflow-x-hidden flex-1 scrollbar-thin scrollbar-thumb-border-default scrollbar-track-bg-tertiary"
         >
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              position: 'relative',
-            }}
-          >
-            {virtualItems.map((virtualRow) => {
-              const token = tokens[virtualRow.index]
-              return (
-                <AxiomTableRowNew
-                  key={token.id}
-                  token={token}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                />
-              )
-            })}
+          {/* Desktop: Virtual scrolling table */}
+          <div className="hidden md:block">
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                position: 'relative',
+              }}
+            >
+              {virtualItems.map((virtualRow) => {
+                const token = tokens[virtualRow.index]
+                return (
+                  <AxiomTableRowNew
+                    key={token.id}
+                    token={token}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Mobile: Card list */}
+          <div className="md:hidden">
+            {tokens.map((token) => (
+              <MobileTokenCard key={token.id} token={token} />
+            ))}
           </div>
         </div>
       )}
@@ -251,10 +270,10 @@ export default function AxiomPulsePage() {
   }
 
   return (
-    <main className="h-screen bg-bg-primary overflow-hidden flex flex-col pb-12">
-      <div className="w-full max-w-full px-2 sm:px-4 py-4 flex-1 flex flex-col overflow-hidden">
-        {/* Page Header - Axiom Style */}
-        <header className="mb-4 flex-shrink-0">
+    <main className="min-h-screen md:h-screen bg-bg-primary md:overflow-hidden flex flex-col md:pb-12">
+      <div className="w-full max-w-full px-2 sm:px-4 py-4 flex-1 flex flex-col md:overflow-hidden">
+        {/* Page Header - Axiom Style (Desktop only) */}
+        <header className="mb-4 flex-shrink-0 hidden md:block">
           <div className="flex items-center justify-between">
             {/* Left: Title + Icon Buttons */}
             <div className="flex items-center gap-3">
@@ -462,13 +481,13 @@ export default function AxiomPulsePage() {
           </div>
         )}
 
-        {/* All Three Sections in Same Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 w-full flex-1 min-h-0">
+        {/* All Three Sections in Same Row - Desktop: 3 columns, Mobile: Stacked */}
+        <div className="flex flex-col md:grid md:grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 w-full flex-1 md:min-h-0">
           {sections.map((section) => {
             const sectionTokens = getSectionTokens(section.status)
 
             return (
-              <section key={section.status} className="min-w-0 flex flex-col min-h-0">
+              <section key={section.status} className="min-w-0 flex flex-col md:min-h-0">
                 {/* Section Table with Independent Scrollbar */}
                 <TokenSectionTable
                   tokens={sectionTokens}
